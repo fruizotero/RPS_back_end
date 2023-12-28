@@ -8,33 +8,21 @@ import java.util.Map;
 
 public class RockPaperScissors {
 
-    private Map<String, Session> peersGame;
 
-    public RockPaperScissors(HashMap<String, Session> peersGame) {
-        this.peersGame = peersGame;
-    }
 
-    private ArrayList<Session> hashMapToArray() {
-        ArrayList<Session> listSessions = new ArrayList<>();
-        for (Map.Entry<String, Session> entry : peersGame.entrySet()) {
-            listSessions.add(entry.getValue());
-        }
-        return listSessions;
-    }
 
-    public Map<String, String> getWinner() {
+    public static Map<String, String> getWinner(Peer p1, Peer p2) {
 
-        ArrayList<Session> listSessions = hashMapToArray();
-        String idPeer1 = listSessions.get(0).getId();
-        String idPeer2 = listSessions.get(1).getId();
+        String idPeer1 = p1.getIdPeer();
+        String idPeer2 = p2.getIdPeer();
         Map<String, String> listResults = new HashMap<>();
         listResults.put("R|S", idPeer1);
         listResults.put("P|R", idPeer1);
         listResults.put("S|P", idPeer1);
         Map<String, String> results = new HashMap<>();
 
-        String choicePeer1 = (String) listSessions.get(0).getUserProperties().get("choice");
-        String choicePeer2 = (String) listSessions.get(1).getUserProperties().get("choice");
+        String choicePeer1 = p1.getChoice();
+        String choicePeer2 = p2.getChoice();
 
         if (choicePeer1.equalsIgnoreCase(choicePeer2)) {
             results.put("draw", null);

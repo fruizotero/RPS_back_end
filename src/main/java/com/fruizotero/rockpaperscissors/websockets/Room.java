@@ -22,16 +22,19 @@ public class Room {
         sessions.remove(session.getId());
     }
 
-    public void sendMessage(String idWinner) {
+    public void sendMessage(String idWinner, String idLoser) {
 //TODO:: mensaje para los participantes
-        for (Map.Entry<String, Session> entry : sessions.entrySet()) {
-            String id = entry.getKey();
-            Session session = entry.getValue();
-            if (id.equalsIgnoreCase(idWinner)) {
-                session.getAsyncRemote().sendText("Has ganado");
-            } else{
-                session.getAsyncRemote().sendText("Has perdido");
+        Session winner = sessions.get(idWinner);
+        Session loser = sessions.get(idLoser);
+        if (winner != null) {
+            winner.getAsyncRemote().sendText("Ganador");
+            loser.getAsyncRemote().sendText("Perdedor");
+        } else {
+            for (Map.Entry<String, Session> entry : sessions.entrySet()) {
+                Session session = entry.getValue();
+                session.getAsyncRemote().sendText("empate");
             }
+
         }
     }
 

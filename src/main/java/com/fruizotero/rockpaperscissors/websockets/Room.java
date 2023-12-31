@@ -2,40 +2,69 @@ package com.fruizotero.rockpaperscissors.websockets;
 
 import jakarta.websocket.Session;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Room {
 
-    private String nameRoom;
-    private HashMap<String, Session> sessions = new HashMap<>();
+    private String idRoom;
+    private Map<String, Session> roomPeers = new HashMap<>();
 
-    public Room(String nameRoom) {
-        this.nameRoom = nameRoom;
+    public Room(String idRoom) {
+        this.idRoom = idRoom;
+    }
+
+
+    public int lenghtPeers() {
+        return roomPeers.size();
+    }
+
+    public ArrayList<String> idsPeers() {
+        ArrayList<String> ids = new ArrayList<>();
+
+        for (Map.Entry<String, Session> entry : roomPeers.entrySet()) {
+            ids.add(entry.getKey());
+        }
+
+        return ids;
     }
 
     public void joinToRoom(Session session) {
-        sessions.put(session.getId(), session);
+        roomPeers.put(session.getId(), session);
     }
 
     public void exitToRoom(Session session) {
-        sessions.remove(session.getId());
+        roomPeers.remove(session.getId());
     }
 
-    public void sendMessage(String idWinner, String idLoser) {
-//TODO:: mensaje para los participantes
-        Session winner = sessions.get(idWinner);
-        Session loser = sessions.get(idLoser);
-        if (winner != null) {
-            winner.getAsyncRemote().sendText("Ganador");
-            loser.getAsyncRemote().sendText("Perdedor");
+    public void sendMessageResult(Map<String, Peer> results) {
+        Peer winner = results.get("winner");
+        Peer loser = results.get("loser");
+
+        if (winner != null && loser != null) {
+            winner = results.get("winner");
+            loser = results.get("loser");
+            Session sessionWinner = roomPeers.get(winner.getIdPeer());
+            Session sessionLoser = roomPeers.get(loser.getIdPeer());
+            sessionWinner.getAsyncRemote().sendText(Peer.toJson(setMsgReady(winner, "ganador")));
+            sessionLoser.getAsyncRemote().sendText(Peer.toJson(setMsgReady(loser, "perdedor")));
+
         } else {
-            for (Map.Entry<String, Session> entry : sessions.entrySet()) {
+            for (Map.Entry<String, Session> entry : roomPeers.entrySet()) {
                 Session session = entry.getValue();
-                session.getAsyncRemote().sendText("empate");
+                Peer peerDraw = WebSocketEndpoint.peers.get(entry.getKey());
+                session.getAsyncRemote().sendText(Peer.toJson(setMsgReady(peerDraw, "empate")));
             }
 
         }
+
+    }
+
+    private Peer setMsgReady(Peer peer, String msg) {
+        peer.setMessage(msg);
+        peer.setReady(false);
+        return peer;
     }
 
 

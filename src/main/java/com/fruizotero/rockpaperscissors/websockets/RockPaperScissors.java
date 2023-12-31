@@ -9,9 +9,7 @@ import java.util.Map;
 public class RockPaperScissors {
 
 
-
-
-    public static Map<String, String> getWinner(Peer p1, Peer p2) {
+    public static Map<String, Peer> getWinner(Peer p1, Peer p2) {
 
         String idPeer1 = p1.getIdPeer();
         String idPeer2 = p2.getIdPeer();
@@ -19,7 +17,7 @@ public class RockPaperScissors {
         listResults.put("R|S", idPeer1);
         listResults.put("P|R", idPeer1);
         listResults.put("S|P", idPeer1);
-        Map<String, String> results = new HashMap<>();
+        Map<String, Peer> results = new HashMap<>();
 
         String choicePeer1 = p1.getChoice();
         String choicePeer2 = p2.getChoice();
@@ -32,9 +30,11 @@ public class RockPaperScissors {
         String idWinner = listResults.getOrDefault(String.format("%s|%s", choicePeer1, choicePeer2), null);
 
         if (idWinner != null) {
-            results.put("winner", idPeer1);
+            results.put("winner", p1);
+            results.put("loser", p2);
         } else {
-            results.put("winner", idPeer2);
+            results.put("winner", p2);
+            results.put("loser", p1);
         }
 
 

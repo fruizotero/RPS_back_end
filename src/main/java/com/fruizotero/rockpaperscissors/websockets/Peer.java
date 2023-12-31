@@ -1,5 +1,7 @@
 package com.fruizotero.rockpaperscissors.websockets;
 
+import com.google.gson.Gson;
+
 public class Peer {
     private String message;
     private boolean ready;
@@ -44,5 +46,15 @@ public class Peer {
 
     public void setIdPeer(String idPeer) {
         this.idPeer = idPeer;
+    }
+
+    public static String toJson(Peer peer){
+        Gson gson = new Gson();
+        return gson.toJson(peer);
+    }
+
+    public static Peer fromJson(String peerString){
+        Gson gson = new Gson();
+        return gson.fromJson(peerString, Peer.class);
     }
 }

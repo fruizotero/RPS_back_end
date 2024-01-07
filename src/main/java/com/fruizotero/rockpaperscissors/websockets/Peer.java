@@ -4,15 +4,22 @@ import com.google.gson.Gson;
 
 public class Peer {
     private String message;
-    private boolean ready;
     private String choice;
     private String idPeer;
+    private boolean ready;
+    private boolean winner;
+    private boolean draw;
+
+    private boolean isWaiting;
 
     public Peer(String idPeer) {
         this.message = "";
         this.ready = false;
         this.choice = "";
         this.idPeer = idPeer;
+        this.winner = false;
+        this.draw = false;
+        this.isWaiting = true;
     }
 
 
@@ -48,12 +55,36 @@ public class Peer {
         this.idPeer = idPeer;
     }
 
-    public static String toJson(Peer peer){
+    public boolean isWinner() {
+        return winner;
+    }
+
+    public void setWinner(boolean winner) {
+        this.winner = winner;
+    }
+
+    public boolean isDraw() {
+        return draw;
+    }
+
+    public void setDraw(boolean draw) {
+        this.draw = draw;
+    }
+
+    public boolean isWaiting() {
+        return isWaiting;
+    }
+
+    public void setWaiting(boolean waiting) {
+        isWaiting = waiting;
+    }
+
+    public static String toJson(Peer peer) {
         Gson gson = new Gson();
         return gson.toJson(peer);
     }
 
-    public static Peer fromJson(String peerString){
+    public static Peer fromJson(String peerString) {
         Gson gson = new Gson();
         return gson.fromJson(peerString, Peer.class);
     }

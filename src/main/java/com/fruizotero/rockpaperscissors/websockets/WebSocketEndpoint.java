@@ -9,52 +9,43 @@ import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 
 @ServerEndpoint("/rockpaperscissors/{idRoom}")
 public class WebSocketEndpoint {
 
-    private static Map<String, Room> rooms = new HashMap<>();
-    public static Map<String, Peer> peers = new HashMap<>();
-
     @OnOpen
     public void onOpen(Session session, @PathParam("idRoom") String idRoom) {
         String idPeer = session.getId();
-        Room room = rooms.computeIfAbsent(idRoom, Room::new);
-        room.joinToRoom(session);
-        Peer peer = peers.computeIfAbsent(idPeer, Peer::new);
-
-        session.getAsyncRemote().sendText(Peer.toJson(peer));
-
-        System.out.println("Cantidad Room: " + rooms.size());
-        System.out.println("Cantidad peers:" + peers.size());
+        Rooms.addToRoom(idPeer, idRoom, session);
+        System.out.println(idPeer);
 
     }
 
     @OnMessage
     public void onMessage(String message, Session session, @PathParam("idRoom") String idRoom) {
 
-        Room room = rooms.get(idRoom);
+        Room room = Rooms.getRoom(idRoom);
         String id = session.getId();
 
-        peers.put(id, Peer.fromJson(message));
+        Rooms.setPeer(id, Peer.fromJson(message));
 
-        if (!(room.lenghtPeers() > 1)) {
-            Peer p = peers.get(id);
+        if (room.lenghtPeers() == 1) {
+            Peer p = Rooms.getPeer(id);
             p.setMessage("Esperando al otro jugador");
             session.getAsyncRemote().sendText(Peer.toJson(p));
             return;
         }
 
         ArrayList<String> ids = room.idsPeers();
-        Peer p1 = peers.get(ids.get(0));
-        Peer p2 = peers.get(ids.get(1));
+        Peer p1 = Rooms.getPeer(ids.get(0));
+        Peer p2 = Rooms.getPeer(ids.get(1));
 
         if (p1.isReady() && p2.isReady()) {
-            room.sendMessageResult(RockPaperScissors.getWinner(p1, p2));
-        } else{
-            Peer p = peers.get(id);
+            RockPaperScissors.getWinner(p1, p2);
+            room.sendMessageResult(new ArrayList<>(Arrays.asList(p1, p2)));
+        } else {
+            Peer p = Rooms.getPeer(id);
             p.setMessage("Esperando al otro jugador");
             session.getAsyncRemote().sendText(Peer.toJson(p));
         }
@@ -63,9 +54,10 @@ public class WebSocketEndpoint {
 
     @OnClose
     public void onClose(Session session, @PathParam("idRoom") String idRoom) {
-        Room room = rooms.get(idRoom);
+        Room room = Rooms.getRoom(idRoom);
         if (room != null) {
             room.exitToRoom(session);
+            Rooms.removePeer(session.getId());
         }
     }
 

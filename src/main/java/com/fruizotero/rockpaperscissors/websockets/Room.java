@@ -35,28 +35,14 @@ public class Room {
     }
 
     public void exitToRoom(Session session) {
-        roomPeers.remove(session.getId());
+        Session s = roomPeers.remove(session.getId());
     }
 
-    public void sendMessageResult(Map<String, Peer> results) {
-        Peer winner = results.get("winner");
-        Peer loser = results.get("loser");
+    public void sendMessageResult(ArrayList<Peer> peers) {
 
-        if (winner != null && loser != null) {
-            winner = results.get("winner");
-            loser = results.get("loser");
-            Session sessionWinner = roomPeers.get(winner.getIdPeer());
-            Session sessionLoser = roomPeers.get(loser.getIdPeer());
-            sessionWinner.getAsyncRemote().sendText(Peer.toJson(setMsgReady(winner, "ganador")));
-            sessionLoser.getAsyncRemote().sendText(Peer.toJson(setMsgReady(loser, "perdedor")));
-
-        } else {
-            for (Map.Entry<String, Session> entry : roomPeers.entrySet()) {
-                Session session = entry.getValue();
-                Peer peerDraw = WebSocketEndpoint.peers.get(entry.getKey());
-                session.getAsyncRemote().sendText(Peer.toJson(setMsgReady(peerDraw, "empate")));
-            }
-
+        for (Peer p : peers) {
+            Session s = roomPeers.get(p.getIdPeer());
+            s.getAsyncRemote().sendText(Peer.toJson(setMsgReady(p, "")));
         }
 
     }
@@ -64,6 +50,8 @@ public class Room {
     private Peer setMsgReady(Peer peer, String msg) {
         peer.setMessage(msg);
         peer.setReady(false);
+        peer.setWaiting(false);
+
         return peer;
     }
 

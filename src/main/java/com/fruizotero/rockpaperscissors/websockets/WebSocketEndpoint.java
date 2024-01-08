@@ -11,9 +11,17 @@ import jakarta.websocket.server.ServerEndpoint;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Clase con un Endpoint para que los usuarios puedan conectarse a una Room
+ */
 @ServerEndpoint("/rockpaperscissors/{idRoom}")
 public class WebSocketEndpoint {
 
+    /**
+     * Se conecta a una Room al establecer la conexión
+     * @param session sesión
+     * @param idRoom id de la Room
+     */
     @OnOpen
     public void onOpen(Session session, @PathParam("idRoom") String idRoom) {
         String idPeer = session.getId();
@@ -22,6 +30,12 @@ public class WebSocketEndpoint {
 
     }
 
+    /**
+     * Gestiona los mensajes entre los usuarios conectados a una Room. Maneja algo de lógica para la funcionalidad del juego.
+     * @param message mensaje con el json
+     * @param session sesión
+     * @param idRoom id de la Room
+     */
     @OnMessage
     public void onMessage(String message, Session session, @PathParam("idRoom") String idRoom) {
 
@@ -52,6 +66,11 @@ public class WebSocketEndpoint {
 
     }
 
+    /**
+     * Elimina las sesiones vinculadas a la Room cuando se cierra la conexión.
+     * @param session sesión
+     * @param idRoom id de la Room
+     */
     @OnClose
     public void onClose(Session session, @PathParam("idRoom") String idRoom) {
         Room room = Rooms.getRoom(idRoom);

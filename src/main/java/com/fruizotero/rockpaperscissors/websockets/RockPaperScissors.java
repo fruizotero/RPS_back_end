@@ -1,8 +1,16 @@
 package com.fruizotero.rockpaperscissors.websockets;
 
+/**
+ * Clase encargada de gestionar la lógica del juego.
+ */
 public class RockPaperScissors {
 
 
+    /**
+     * Se encarga de determinar el ganador.
+     * @param p1 jugador 1
+     * @param p2 jugador 2
+     */
     public static void getWinner(Peer p1, Peer p2) {
 
         String stringResults = "R|S P|R S|P";

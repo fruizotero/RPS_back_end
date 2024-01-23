@@ -8,6 +8,7 @@ public class RockPaperScissors {
 
     /**
      * Se encarga de determinar el ganador.
+     *
      * @param p1 jugador 1
      * @param p2 jugador 2
      */
@@ -16,6 +17,8 @@ public class RockPaperScissors {
         String stringResults = "R|S P|R S|P";
         String choicePeer1 = p1.getChoice();
         String choicePeer2 = p2.getChoice();
+        p1.setChoiceOtherPeer(choicePeer2);
+        p2.setChoiceOtherPeer(choicePeer1);
         String choices = "";
 
         if (choicePeer1.equalsIgnoreCase(choicePeer2)) {

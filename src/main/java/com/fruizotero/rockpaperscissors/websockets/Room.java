@@ -81,7 +81,7 @@ public class Room {
     private Peer setMsgReady(Peer peer, String msg) {
         peer.setMessage(msg);
         peer.setReady(false);
-        peer.setWaiting(false);
+        peer.setIsWaiting(false);
 
         return peer;
     }

@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 public class Peer {
     private String message;
     private String choice;
+    private String choiceOtherPeer;
     private String idPeer;
     private boolean ready;
     private boolean winner;
@@ -77,8 +78,16 @@ public class Peer {
         return isWaiting;
     }
 
-    public void setWaiting(boolean waiting) {
-        isWaiting = waiting;
+    public void setIsWaiting(boolean isWaiting) {
+        this.isWaiting = isWaiting;
+    }
+
+    public String getChoiceOtherPeer() {
+        return choiceOtherPeer;
+    }
+
+    public void setChoiceOtherPeer(String choiceOtherPeer) {
+        this.choiceOtherPeer = choiceOtherPeer;
     }
 
     /**

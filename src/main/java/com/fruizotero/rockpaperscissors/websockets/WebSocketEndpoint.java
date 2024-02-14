@@ -19,8 +19,9 @@ public class WebSocketEndpoint {
 
     /**
      * Se conecta a una Room al establecer la conexión
+     *
      * @param session sesión
-     * @param idRoom id de la Room
+     * @param idRoom  id de la Room
      */
     @OnOpen
     public void onOpen(Session session, @PathParam("idRoom") String idRoom) {
@@ -32,9 +33,10 @@ public class WebSocketEndpoint {
 
     /**
      * Gestiona los mensajes entre los usuarios conectados a una Room. Maneja algo de lógica para la funcionalidad del juego.
+     *
      * @param message mensaje con el json
      * @param session sesión
-     * @param idRoom id de la Room
+     * @param idRoom  id de la Room
      */
     @OnMessage
     public void onMessage(String message, Session session, @PathParam("idRoom") String idRoom) {
@@ -47,6 +49,13 @@ public class WebSocketEndpoint {
         if (room.lenghtPeers() == 1) {
             Peer p = Rooms.getPeer(id);
             p.setMessage("Esperando al otro jugador");
+            session.getAsyncRemote().sendText(Peer.toJson(p));
+            return;
+        }
+
+        if (room.lenghtPeers() > 2) {
+            Peer p = Rooms.getPeer(id);
+            p.setMessage("La sala está completa, dirigete a otra");
             session.getAsyncRemote().sendText(Peer.toJson(p));
             return;
         }
@@ -68,8 +77,9 @@ public class WebSocketEndpoint {
 
     /**
      * Elimina las sesiones vinculadas a la Room cuando se cierra la conexión.
+     *
      * @param session sesión
-     * @param idRoom id de la Room
+     * @param idRoom  id de la Room
      */
     @OnClose
     public void onClose(Session session, @PathParam("idRoom") String idRoom) {

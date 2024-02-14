@@ -23,6 +23,7 @@ public class Peer {
         this.winner = false;
         this.draw = false;
         this.isWaiting = true;
+        this.choiceOtherPeer="";
     }
 
 
